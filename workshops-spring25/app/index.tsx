@@ -3,13 +3,14 @@ import { Text, View, Pressable, StyleSheet } from "react-native";
 
 
 
+const defaultCount = 100; // TODO: count should start from 0
 function updateCount(count: number, setCount: (x: number) => null) {
 	const newCount = count - 1; // TODO: count should count up
 	setCount(newCount);
 }
 
 function Counter() {
-	const [count, setCount] = useState<number>(100); // TODO: default should be 0
+	const [count, setCount] = useState<number>(defaultCount); 
 	const handlePress = () => updateCount(count, setCount);
 	return (
 			<Pressable onPress={handlePress}>
