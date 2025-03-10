@@ -3,9 +3,9 @@ import { Text, View, Pressable, StyleSheet } from "react-native";
 
 
 
-const defaultCount = 100; // TODO: count should start from 0
+const defaultCount = 0; // TODO: count should start from 0
 function updateCount(count: number, setCount: (x: number) => null) {
-	const newCount = count - 1; // TODO: count should count up
+	const newCount = count + 1; // TODO: count should count up
 	setCount(newCount);
 }
 
