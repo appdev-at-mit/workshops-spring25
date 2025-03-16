@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "workshops-spring25",
-    "slug": "workshops-spring25",
+    "slug": "workshop-test",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -42,9 +42,9 @@
         "origin": false
       },
       "eas": {
-        "projectId": "5a1cb574-7eb1-4b16-bca1-a984027b83f9"
+        "projectId": "babb4a09-7211-460a-a77f-a132e02d1af4"
       }
     },
-    "owner": "rice06"
+    "owner": "awl205"
   }
 }
