@@ -9,6 +9,9 @@ not be updated in the future; it exists purely for easy archival now.
 The relevant code we wrote during workshop is replicated in this file
 for convenience, along with some brief commentary on the important parts.
 
+See `ts-reference.md` in this directory for a primer to TypeScript and some
+very common useful patterns that can be seen in the code this week.
+
 ## Part 1
 
 In `components/rules.tsx`, we created a component to render the rules for a puzzle. 
