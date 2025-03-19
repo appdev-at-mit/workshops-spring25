@@ -245,7 +245,7 @@ It's basically the same in TypeScript.
 
 ```ts
 const a: <Array<number, number>> = [[1, 2], [3, 4], [5, 6]];
-for (const x, y of a) {
+for (const [x, y] of a) {
     console.log(x*y); // 2, 12, 30
 }
 ```
