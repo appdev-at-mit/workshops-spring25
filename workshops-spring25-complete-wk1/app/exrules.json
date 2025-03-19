@@ -1,0 +1,8 @@
+[
+"Each region contains exactly one number.",
+"A number indicates the size of the region that contains it.",
+"You cannot shade a cell with a number.",
+"The shaded cells cannot form a 2x2 square.",
+"All shaded cells form an orthogonally contiguous area."
+]
+
