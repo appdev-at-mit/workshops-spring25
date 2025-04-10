@@ -2,7 +2,15 @@ import { Text, ScrollView } from 'react-native';
 
 
 // PART 1
-export default function PuzzleRules() { // TODO: make it take props
-	// TODO: make this return a ScrollView
-	// containing all of the rules, separated by new lines
+//
+type PuzzleRuleProps = {ruleTexts: Array<string>};
+
+export default function PuzzleRules({ruleTexts}: PuzzleRuleProps) { 
+	const ruleTextsAll = ruleTexts.map((x, i) => `${i+1}. ${x}`).join('\n');
+	return (
+		<ScrollView>
+			<Text>Rules</Text>
+			<Text>{ruleTextsAll}</Text>
+		</ScrollView>
+	);
 }

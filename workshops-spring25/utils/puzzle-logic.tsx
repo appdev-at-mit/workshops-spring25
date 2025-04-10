@@ -3,7 +3,7 @@
 //
 // will probably need refactoring in the future lmao
 
-type BoxColor = 'white' | 'black';
+export type BoxColor = 'white' | 'black';
 
 export interface Puzzle {
 	
@@ -23,6 +23,8 @@ export interface Puzzle {
 
 	checkCorrect(): boolean;
 
+    copy(): Puzzle;
+
 }
 
 
@@ -30,6 +32,8 @@ export class NurikabePuzzle implements Puzzle {
 
 	// zeroes are blanks, all other numbers are
 	// the given numbers in the puzzle
+    // numbergrid is an array of rows in the puzzle, where
+    // each row is a subarray of numbers
 	
 	private readonly colorGrid: BoxColor[][] = new Array();
 	private readonly numberGrid: number[][] = new Array();
@@ -38,7 +42,7 @@ export class NurikabePuzzle implements Puzzle {
 	public readonly height: number,
 	public readonly width: number,
 	public readonly answer: ReadonlyArray<ReadonlyArray<number>>, 
-	givens: Array<{x: number, y: number, value: number}>) {
+	private readonly givens: Array<{x: number, y: number, value: number}>) {
 
 		for (let r=0; r<height; r++) {
 			const colorRow = new Array(width).fill('white');
@@ -55,14 +59,14 @@ export class NurikabePuzzle implements Puzzle {
 	}
 	
 
-	/*
+	/**
 	 * @inheritdoc
 	 */
 	public getColor(x: number, y: number): BoxColor {
 		return this.colorGrid[y][x];
 	}
 
-	/*
+	/**
 	 * @inheritdoc
 	 */
 	public getNumber(x: number, y: number): number|undefined {
@@ -70,14 +74,14 @@ export class NurikabePuzzle implements Puzzle {
 		return (num !== 0) ? num : undefined;
 	}
 
-	/*
+	/**
 	 * @inheritdoc
 	 */
 	public updatePuzzle(x: number, y: number, color: BoxColor): void {
 		this.colorGrid[y][x] = color;
 	}
 
-	/*
+	/**
 	 * @inheritdoc
 	 */
 	public checkCorrect() {
@@ -91,6 +95,19 @@ export class NurikabePuzzle implements Puzzle {
 		}
 		return true;
 	}
+    
+	/**
+	 * @inheritdoc
+	 */
+     public copy(): NurikabePuzzle {
+         const puzzle = new NurikabePuzzle(this.height, this.width, this.answer, this.givens);
+         for (const [y, row] of this.colorGrid.entries()) {
+             for (const [x, color] of row.entries()) {
+                 puzzle.updatePuzzle(x, y, color);
+             }
+         }
+         return puzzle;
+     }
 
 
 }

@@ -18,12 +18,24 @@ export default function AnswerCheck({puzzle}: {puzzle: Puzzle}) {
 	}
 
 	// PART 2
-	// TODO: create styles and pass them as props
-	// into the components we return
+	const buttonStyles = StyleSheet.create({
+		buttonMain: {
+			backgroundColor: color,
+			borderRadius: 10,
+			marginVertical: 20,
+			marginHorizontal: 20,
+			paddingVertical: 20,
+			paddingHorizontal: 40,
+		},
+		buttonText: {
+			fontSize: 25,
+			fontWeight: 'bold',
+		},
+	});
 
 	return (
-		<Pressable onPress={handlePress}>
-			<Text>Check!</Text>
+		<Pressable onPress={handlePress} style={buttonStyles.buttonMain}>
+			<Text style={buttonStyles.buttonText}>Check!</Text>
 		</Pressable>
 	)
 }

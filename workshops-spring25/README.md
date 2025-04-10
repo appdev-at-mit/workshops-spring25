@@ -1,50 +1,148 @@
-# Welcome to your Expo app 👋
+# Week 1 Code Reference
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+This week, we took a look at a work in progress app to play logic puzzles,
+similar to NYT Games or Flow Free. We covered the basics of creating components,
+using style sheets, and using state to create interactive pages.
 
-## Get started
+This folder contains the **completed example repo** after the workshop and will
+not be updated in the future; it exists purely for easy archival now.
+The relevant code we wrote during workshop is replicated in this file
+for convenience, along with some brief commentary on the important parts.
 
-1. Install dependencies
+See `ts-reference.md` in this directory for a primer to TypeScript and some
+very common useful patterns that can be seen in the code this week.
 
-   ```bash
-   npm install
-   ```
+## Part 1
 
-2. Start the app
+In `components/rules.tsx`, we created a component to render the rules for a puzzle. 
 
-   ```bash
-    npx expo start
-   ```
+This component takes in one *prop* (essentially a function argument) of an array
+of strings corresponding to the rules of the puzzle. When called, it returns a
+JSX element representing a `ScrollView` containing each rule in the array as
+one `Text` element. 
 
-In the output, you'll find options to open the app in a
+```ts 
+type PuzzleRuleProps = {ruleTexts: Array<string>};
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+export default function PuzzleRules({ruleTexts}: PuzzleRuleProps) { 
+	const ruleTextsAll = ruleTexts.join('\n');
+	return (
+		<ScrollView>
+			<Text>Rules</Text>
+			<Text>{ruleTextsAll}</Text>
+		</ScrollView>
+	);
+}
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Then, we can access that element at any time with
+```ts
+<PuzzleRules ruleTexts={['rule 1', 'rule 2']}/>
+```
 
-## Learn more
+Make sure to take note of where braces are used.
 
-To learn more about developing your project with Expo, look at the following resources:
+## Part 2
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+In `components/check-button.tsx`, we added styles to an existing button 
+component to make it look better.
+We did this with a `StyleSheet`, then passing attributes of the
+style sheet as props into our components. As with the last part, note the braces.
 
-## Join the community
+```ts
+export default function AnswerCheck({puzzle}: {puzzle: Puzzle}) {
 
-Join our community of developers creating universal apps.
+    // this part was provided for us
+	const [color, setColor]: [string, SetState<string>] = useState<string>(themeColors.bgGray);
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+	const correctColor = '#2bcf41';
+	const incorrectColor = '#cf0c0c';
+
+	function handlePress() {
+		const correct = puzzle.checkCorrect();
+		setColor(correct ? correctColor : incorrectColor);
+	}
+
+    // this is the new style sheet
+	const buttonStyles = StyleSheet.create({
+		buttonMain: {
+			backgroundColor: color,
+			borderRadius: 10,
+			marginVertical: 10,
+			marginHorizontal: 20,
+			padding: 40,
+		},
+		buttonText: {
+			fontSize: 25,
+			fontWeight: 'bold',
+		},
+	});
+
+    // note how we have to pass the styles for them to take effect
+	return (
+		<Pressable onPress={handlePress} style={buttonStyles.buttonMain}>
+			<Text style={buttonStyles.buttonText}>Check!</Text>
+		</Pressable>
+	)
+}
+```
+
+## Part 3
+
+In `app/index.tsx`, we fixed the logic in `RectVertex` in order for it to behave
+correctly with state.
+
+```ts
+type RectVertexProps = {row: number, col: number, size: number};
+type SetState<T> = React.Dispatch<React.SetStateAction<T>> // (newState: T) => void
+
+const RectVertex = (props: RectVertexProps) => {
+
+    // use the setter function in order to update a variable
+    // and have it be re-rendered!
+	const [color, setColor]: [string, SetState<string>] = useState<string>('#ffffff');
+
+	const toggleColor = (color: string) => {
+        // if color is white, set it to black, and vice versa
+        // in terms of code style, it would be much better to use an enum
+		setColor(color === '#000000' ? '#ffffff' : '#000000');
+
+        // update the state of the puzzle
+		const colorName = color === '#000000' ? 'black' : 'white'
+		examplePuzzle.updatePuzzle(props.col, props.row, colorName);
+	};
+
+    // the styles were provided to us
+	const vertexStyles = StyleSheet.create({
+		vertex: {
+			backgroundColor: color,
+			width: props.size,
+			borderWidth: props.size / 30,
+		}
+	});
+
+    // we define a function with ZERO ARGUMENTS
+    // this gets passed to the onPress prop
+	function handlePress(): void {
+		toggleColor(color);
+	}
+
+	return (
+		<Pressable
+			onPress = {handlePress}
+			style = {[styles.blank, vertexStyles.vertex]} >
+			<Text 
+				style={styles.vertexText}
+				allowFontScaling={true}
+				numberOfLines={1}
+				adjustsFontSizeToFit={true}>
+					{examplePuzzle.getNumber(props.col, props.row)??''}
+			</Text>
+		</Pressable>
+	);
+};
+```
+
+Take careful note of what `handlePress` does. Also take note of how it gets passed into the `onPress` 
+prop. We are treating the function *as if it was an object*, giving it to `onPress` so it can
+call `handlePress` as needed. This is an example of the concept of higher-order functions.
