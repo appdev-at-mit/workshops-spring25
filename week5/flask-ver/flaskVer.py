@@ -1,6 +1,14 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
+
+# for cors to work
+# https://stackoverflow.com/questions/25594893/how-to-enable-cors-in-flask
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
+
+# we are listening at this port
 PORT = 8000
 
 # Fake "database" containing dorm names and a list of student names.
@@ -14,10 +22,10 @@ dorms = {
 
 # GET endpoint to retrieve the number of students in a dorm.
 @app.route('/dorm/num_students', methods=['GET'])
+@cross_origin()
 def get_num_students():
     # Try to parse JSON data from the request body.
-    data = request.get_json(silent=True)
-    dorm_name = data.get('dorm') if data else None
+    dorm_name = request.args.get('dormName', None)
 
     # If no dorm name is provided, return a 400 Bad Request error.
     if not dorm_name:
@@ -29,11 +37,12 @@ def get_num_students():
 
     # Calculate and return the number of students.
     num_students = len(dorms[dorm_name])
-    return jsonify({'dorm': dorm_name, 'students': num_students})
+    return jsonify({'dorm': dorm_name, 'count': num_students})
 
 
 # POST endpoint to add a student to a specified dorm.
 @app.route('/dorm/num_students', methods=['POST'])
+@cross_origin()
 def add_student():
     # Parse the JSON data from the request body.
     data = request.get_json(silent=True)
