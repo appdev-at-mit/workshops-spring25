@@ -13,6 +13,8 @@ counts = {
     "next": 256,
 }
 
+origin = '*'
+
 dorms = {
     'simmons': ['Hailey Pan', 'Eric Zhan', 'Owen Coulter', 'Rachel Onwu'],
     'random': ['Jensen Coonradt', 'Fiona Lu', 'Grant Hu'],
@@ -38,7 +40,7 @@ def get_dorm_count(dorm_name: str) -> str:
         "HTTP/1.1 200 OK\r\n"
         "Content-Type: application/json\r\n"
         f"Content-Length: {len(body)}\r\n"
-        f"Access-Control-Allow-Origin: *\r\n"
+        f"Access-Control-Allow-Origin: {origin}\r\n"
         "\r\n"
         f"{body}"
     )
@@ -57,18 +59,33 @@ def process_req(req: str) -> str:
     if method == "OPTIONS":
         return (
             "HTTP/1.1 200 OK\r\n"
-            "Access-Control-Allow-Origin: http://localhost:5173\r\n"
+            f"Access-Control-Allow-Origin: {origin}\r\n"
             "Access-Control-Allow-Methods: GET, OPTIONS\r\n"
             "Access-Control-Allow-Headers: Content-Type\r\n"
             "Content-Length: 0\r\n\r\n"
         )
     if method == "GET":
         if url.startswith("/dorm/num_students"):
-            dorm_name = re.search(r"\?dormName=(.*)", url)
+            dorm_name = re.search(r"\?dormName=(.+)", url)
             print(dorm_name)
             if dorm_name:
                 return get_dorm_count(dorm_name.groups()[0])
-    return f"HTTP/1.1 400 Bad Request\r\n\r\n"
+    # error
+    print('400 error...')
+    body = (
+            '{"error": "Bad request",\r\n' 
+            '"message": "Dorm name is required"}'
+            )
+    res = (
+            "HTTP/1.1 400 Bad Request\r\n\r\n"
+            f"Access-Control-Allow-Origin: {origin}\r\n"
+            "Content-Type: application/json\r\n"
+            f"Content-Length: {len(body)}\r\n"
+            "\r\n"
+            f"{body}"
+            )
+    print(res)
+    return res
 
 
 # this code is to bind our endpoint to a url,

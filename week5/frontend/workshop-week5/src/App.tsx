@@ -9,6 +9,7 @@ const apiUrl = 'http://localhost:8000/dorm/num_students?';
 function App() {
   const [count, setCount] = useState<number>(0);
   const [activeDorm, setActiveDorm] = useState<string|undefined>(undefined);
+  const [errorMessage, setErrorMessage] = useState<string|undefined>(undefined);
 
   interface FormData {
     dormName: {value: string},
@@ -37,7 +38,13 @@ function App() {
          console.log(data.count);
          setCount(data.count);
          setActiveDorm(dormName);
-     });
+         setErrorMessage(undefined);
+     }).catch(
+       (error: any) => {
+         setErrorMessage(error);
+         console.log('error ', error);
+       }
+     );
     return;
   }
 
@@ -56,6 +63,7 @@ function App() {
           number of students living in <b>{activeDorm}</b>: {count}
         </p> : <></>
         }
+        {errorMessage??<></>}
       </div>
     </>
   );
