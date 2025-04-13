@@ -24,10 +24,6 @@ function App() {
     console.log(formData);
     console.log(formData.dormName.value);
     const dormName = formData.dormName.value;
-    // this is terrible practice. don't do this.
-    // in an actual app, add actual error handling lmao
-    // we will go over integrating things in more detail next week
-    // if you check the return type, it is Promise<void>
     axios.get<{count: number}>(apiUrl, {
       method: 'GET', 
       headers: {'content-type': 'application/json;charset=UTF-8'},
