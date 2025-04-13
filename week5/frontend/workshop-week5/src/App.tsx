@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import axios from 'axios';
 import assert from 'assert';
 import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
@@ -27,24 +28,34 @@ function App() {
     // in an actual app, add actual error handling lmao
     // we will go over integrating things in more detail next week
     // if you check the return type, it is Promise<void>
-    fetch(apiUrl + new URLSearchParams({dormName: dormName}).toString(), {
+    axios.get<{count: number}>(apiUrl, {
       method: 'GET', 
-      headers: {'content-type': 'application/json;charset=UTF-8'}}
+      headers: {'content-type': 'application/json;charset=UTF-8'},
+      params: {dormName: dormName},}
      ).then(
-       (res: Response) => res.json() as Promise<{count: number}>
+       (res) => res.data
+     ).catch(
+       (error: any) => {
+         if (axios.isAxiosError(error)) {
+           setErrorMessage(`ERROR: ${error.response?.data.message??error.response?.data.error}`);
+           setActiveDorm(undefined);
+           console.log('error ', error);
+           console.log('error ', error.response?.data.message);
+         } else {
+           setErrorMessage("Something went wrong.");
+         }
+       }
      ).then(
-       (data: {count: number}) => {
+       (data: void|{count: number}) => {
+         if (!data) {
+           return;
+         }
          console.log(data);
          console.log(data.count);
          setCount(data.count);
          setActiveDorm(dormName);
          setErrorMessage(undefined);
-     }).catch(
-       (error: any) => {
-         setErrorMessage(error);
-         console.log('error ', error);
-       }
-     );
+     });
     return;
   }
 
@@ -63,7 +74,9 @@ function App() {
           number of students living in <b>{activeDorm}</b>: {count}
         </p> : <></>
         }
+        <p>
         {errorMessage??<></>}
+        </p>
       </div>
     </>
   );

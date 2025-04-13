@@ -18,7 +18,7 @@ npm init -y
 
 3. Install Express:
 ```bash
-npm install express
+npm install express cors
 ```
 
 ## Running the API

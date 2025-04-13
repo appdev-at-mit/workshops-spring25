@@ -1,7 +1,11 @@
 // Import Express.js framework
 const express = require('express');
+const cors = require('cors');
+
 // Create an Express app instance
 const app = express();
+app.use(cors());
+
 // Set the port number for our server
 const PORT = 8000;
 
@@ -26,7 +30,7 @@ const dorms = {
 // The client needs to send a JSON body with the dorm name
 app.get('/dorm/num_students', (req, res) => {
     // Extract the dorm name from the request body
-    const dormName = req.body.dorm;
+    const dormName = req.query.dormName;
 
     // Check if dorm name was provided
     // If not, return a 400 Bad Request error
@@ -44,7 +48,7 @@ app.get('/dorm/num_students', (req, res) => {
     const numStudents = dorms[dormName].length;
 
     // Return a JSON response with the dorm name and student count
-    return res.json({ dorm: dormName, students: numStudents });
+    return res.json({ dorm: dormName, count: numStudents });
 });
 
 // POST endpoint to add a student to a specified dorm
@@ -72,7 +76,7 @@ app.post('/dorm/num_students', (req, res) => {
     return res.status(201).json({
         message: 'Student added successfully',
         dorm: dorm,
-        students: dorms[dorm].length
+        count: dorms[dorm].length
     });
 });
 
@@ -81,6 +85,6 @@ app.post('/dorm/num_students', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
     console.log(`Try these endpoints:
-  - GET /dorm/num_students (send {"dorm": "simmons"} in request body)
+  - GET /dorm/num_students?dormName=simmons
   - POST /dorm/num_students (send {"dorm": "simmons", "student": "new_student"} in request body)`);
 });

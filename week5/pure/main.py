@@ -66,7 +66,7 @@ def process_req(req: str) -> str:
         )
     if method == "GET":
         if url.startswith("/dorm/num_students"):
-            dorm_name = re.search(r"\?dormName=(.+)", url)
+            dorm_name = re.search(r"\?.*dormName=(.+)", url)
             print(dorm_name)
             if dorm_name:
                 return get_dorm_count(dorm_name.groups()[0])
@@ -77,7 +77,7 @@ def process_req(req: str) -> str:
             '"message": "Dorm name is required"}'
             )
     res = (
-            "HTTP/1.1 400 Bad Request\r\n\r\n"
+            "HTTP/1.1 400 Bad Request\r\n"
             f"Access-Control-Allow-Origin: {origin}\r\n"
             "Content-Type: application/json\r\n"
             f"Content-Length: {len(body)}\r\n"
