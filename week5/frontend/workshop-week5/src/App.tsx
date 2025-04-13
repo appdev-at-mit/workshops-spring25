@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import axios from 'axios';
 import assert from 'assert';
 import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 import './App.css';
 
-const apiUrl = 'http://localhost:8000/api/dormCount?';
+const apiUrl = 'http://localhost:8000/dorm/num_students?';
 
 function App() {
-  const [count, setCount] = useState<number|undefined>(undefined);
+  const [count, setCount] = useState<number>(0);
+  const [activeDorm, setActiveDorm] = useState<string|undefined>(undefined);
 
   interface FormData {
     dormName: {value: string},
@@ -26,23 +26,19 @@ function App() {
     // in an actual app, add actual error handling lmao
     // we will go over integrating things in more detail next week
     // if you check the return type, it is Promise<void>
-    const res = await fetch(apiUrl + new URLSearchParams({dormName: dormName}).toString(), {
+    fetch(apiUrl + new URLSearchParams({dormName: dormName}).toString(), {
       method: 'GET', 
       headers: {'content-type': 'application/json;charset=UTF-8'}}
-     )
-
-    console.log(res);
-    const data = await res.json() as {count: number};
-    console.log(data);
-    console.log(data.count);
-    setCount(data.count);
+     ).then(
+       (res: Response) => res.json() as Promise<{count: number}>
+     ).then(
+       (data: {count: number}) => {
+         console.log(data);
+         console.log(data.count);
+         setCount(data.count);
+         setActiveDorm(dormName);
+     });
     return;
-
-    axios.get<number>(apiUrl, {params: {dormName: dormName}}).then(
-      (res) => {
-        (setCount(res.data));
-        console.log('res: ', res);
-      }).catch(e => console.log(e));
   }
 
   return (
@@ -55,9 +51,11 @@ function App() {
           <button type="submit">Search</button>
           <br/>
         </form>
+        {activeDorm !== undefined ?
         <p>
-          number of students living there: {count ? count : 'unknown'}
-        </p>
+          number of students living in <b>{activeDorm}</b>: {count}
+        </p> : <></>
+        }
       </div>
     </>
   );

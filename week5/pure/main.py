@@ -1,5 +1,10 @@
 import re
 import socket
+import sqlite3
+
+# connect to the database
+con = sqlite3.connect('db.sqlite3')
+cur = con.cursor()
 
 counts = {
     "simmons": 229,
@@ -7,6 +12,21 @@ counts = {
     "maseeh": 394,
     "next": 256,
 }
+
+dorms = {
+    'simmons': ['Hailey Pan', 'Eric Zhan', 'Owen Coulter', 'Rachel Onwu'],
+    'random': ['Jensen Coonradt', 'Fiona Lu', 'Grant Hu'],
+    'maseeh': ['Alexander Liang', 'Anna Li', 'Justin Le', 'Natalie Tan', 'Vy Pham'],
+    'baker': ['Victoria Park', 'Stephen Hong', 'Kara Chou'],
+    'mccormick': ['Bhadra Rupesh', 'Jack MarionSims', 'Josephine Wang']
+};
+
+# bootstrap code
+# to initialize the database
+# for dorm_name, students in dorms.items():
+    # for student in students:
+        # cur.execute(f'INSERT INTO students (name, dorm) VALUES ("{student}", "{dorm_name}");')
+# con.commit()
 
 
 # our main endpoint
@@ -43,7 +63,7 @@ def process_req(req: str) -> str:
             "Content-Length: 0\r\n\r\n"
         )
     if method == "GET":
-        if url.startswith("/api/dormCount"):
+        if url.startswith("/dorm/num_students"):
             dorm_name = re.search(r"\?dormName=(.*)", url)
             print(dorm_name)
             if dorm_name:
