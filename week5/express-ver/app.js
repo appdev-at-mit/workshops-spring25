@@ -55,28 +55,29 @@ app.get('/dorm/num_students', (req, res) => {
 // The client must send a JSON body with dorm name and student name
 app.post('/dorm/num_students', (req, res) => {
     // Extract both dorm and student name from the request body using destructuring
-    const { dorm, student } = req.body;
+    console.log(req.body);
+    const { name, dormName } = req.body;
 
     // Check that both required fields are present
-    if (!dorm || !student) {
+    if (!dormName || !name) {
         return res.status(400).json({ error: 'Dorm name and student name are required' });
     }
 
     // If the dorm doesn't exist yet, create it as an empty array
     // This allows adding students to new dorms without extra steps
-    if (!dorms[dorm]) {
-        dorms[dorm] = [];
+    if (!dorms[dormName]) {
+        dorms[dormName] = [];
     }
 
     // Add the new student to the dorm's student array
-    dorms[dorm].push(student);
+    dorms[dormName].push(name);
 
     // Return a 201 Created status with a success message and updated count
     // 201 is a status code that means successful resource creation
     return res.status(201).json({
         message: 'Student added successfully',
-        dorm: dorm,
-        count: dorms[dorm].length
+        dorm: dormName,
+        count: dorms[dormName].length
     });
 });
 
