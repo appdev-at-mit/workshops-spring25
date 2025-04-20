@@ -5,12 +5,18 @@ import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 import './App.css';
 
-const apiUrl = 'http://localhost:8000/dorm/num_students?';
+// Express URL
+// const apiUrl = 'http://localhost:8000/dorm/num_students?';
+
+// Django + Flask URL
+const apiUrl = 'http://127.0.0.1:8000/dorm/num_students?';
 
 function App() {
   const [count, setCount] = useState<number>(0);
   const [activeDorm, setActiveDorm] = useState<string|undefined>(undefined);
   const [errorMessage, setErrorMessage] = useState<string|undefined>(undefined);
+  const [studentName, setStudentName] = useState<string>('');
+  const [dormName, setDormName] = useState<string>('');
 
   interface FormData {
     dormName: {value: string},
@@ -55,6 +61,28 @@ function App() {
     return;
   }
 
+  // WEEK 6: POST name and dorm
+  async function handleAddStudent(event: React.FormEvent) {
+    event.preventDefault();
+
+    try {
+      const response = await axios.post(apiUrl, {
+        method: 'POST',
+        name: studentName,
+        dormName: dormName
+      }, {
+        headers: {'content-type': 'application/json;charset=UTF-8'}
+      });
+    } catch (error: any) {
+      if (axios.isAxiosError(error)) {
+        setErrorMessage(`ERROR: ${error.response?.data.message??error.response?.data.error}`);
+      } else {
+        setErrorMessage("Something went wrong.");
+      }
+    }
+  }
+
+
   return (
     <>
       <h1>Dorm Counter</h1>
@@ -73,6 +101,27 @@ function App() {
         <p>
         {errorMessage??<></>}
         </p>
+
+        <h2>Add New Student</h2>
+        <form onSubmit={handleAddStudent}>
+          <div>
+            <label>Student Name: </label>
+            <input 
+              type="text" 
+              value={studentName}
+              onChange={(e) => setStudentName(e.target.value)}
+            />
+          </div>
+          <div>
+            <label>Dorm Name: </label>
+            <input 
+              type="text" 
+              value={dormName}
+              onChange={(e) => setDormName(e.target.value)}
+            />
+          </div>
+          <button type="submit">Add Student</button>
+        </form>
       </div>
     </>
   );

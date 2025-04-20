@@ -50,8 +50,9 @@ def add_student():
         return jsonify({'error': 'Request body must be JSON'}), 400
 
     # Extract dorm and student information.
-    dorm = data.get('dorm')
-    student = data.get('student')
+    dorm = data.get('dormName')
+    student = data.get('name')
+    print(dorm, student)
 
     # Validate that both fields are present.
     if not dorm or not student:

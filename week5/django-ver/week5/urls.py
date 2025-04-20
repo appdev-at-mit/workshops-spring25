@@ -22,5 +22,5 @@ from students import views as student_views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("dorm/num_students", student_views.get_number_students_in_dorm),
+    path("dorm/num_students", student_views.get_number_students_in_dorm)
 ]
